@@ -1,0 +1,26 @@
+name: Deployment pipeline
+
+on:
+  # schedule:
+  #  - cron: "0 18 * * *"
+  push:
+    branches:
+      - main
+  pull_request:
+    branches: [main] # workflow will trigger when someone makes a pull request to the 'main' branch
+    types: [opened, synchronize]
+
+jobs:
+    deployment_pipeline:
+        runs-on: ubuntu-20.04
+        steps:
+            - uses: actions/checkout@v4
+            - uses: actions/setup-node@v4
+              with:
+                node-version: 20
+            
+            - name: Install dependencies
+              run: npm install
+
+            - name: Run linter
+              run: npm run lint

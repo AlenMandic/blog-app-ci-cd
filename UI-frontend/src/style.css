@@ -1,0 +1,12 @@
+*, *::before, *::after {
+  font-weight: normal;
+  font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif
+}
+
+html {
+  background-color: #a29797;
+}
+
+#root {
+  background-color: #a29797;
+}
