@@ -36,7 +36,7 @@ mongoose.set('strictQuery', false)
 mongoose.connect(mongoUrl).then(() => {
   logger.info('Connected to MongoDB database')
 
-}).catch(error => logger.error('Connecting to DB failed:', error.message))
+}).catch(error => logger.error('Connecting to DB failed:', `Mongo connetion url: ${mongoUrl}, ${error.message}`))
 
 app.use(rateLimiters.globalLimiter)
 app.use(middleware.requestLogger)

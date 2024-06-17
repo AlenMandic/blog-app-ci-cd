@@ -40,7 +40,8 @@ jobs:
             - name: Start the test server database
               run: |
                echo "Starting test server"
-               MONGODB_TEST_URI=${{ secrets.MONGODB_TEST_URI }} npm run start:test &
+               npm run start:test &
+               npx wait-on http://localhost:3003
               env:
                 MONGODB_TEST_URI: ${{ secrets.MONGODB_TEST_URI }}
             
