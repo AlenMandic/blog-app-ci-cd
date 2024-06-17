@@ -38,7 +38,9 @@ jobs:
               run: npm run lint
 
             - name: Start the test server database
-              run: npm run start:test &
+              run: |
+               echo "Starting test server"
+               MONGODB_TEST_URI=${{ secrets.MONGODB_TEST_URI }} npm run start:test &
               env:
                 MONGODB_TEST_URI: ${{ secrets.MONGODB_TEST_URI }}
             
