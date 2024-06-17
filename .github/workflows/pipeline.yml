@@ -5,14 +5,26 @@ on:
   #  - cron: "0 18 * * *"
   push:
     branches:
-      - main
+      - master
   pull_request:
-    branches: [main] # workflow will trigger when someone makes a pull request to the 'main' branch
+    branches: [master] # workflow will trigger when someone makes a pull request to the 'master' branch
     types: [opened, synchronize]
 
 jobs:
     deployment_pipeline:
         runs-on: ubuntu-20.04
+
+        services:  # define mongo database for testing purposes
+          mongo:
+            image: mongo:latest
+            ports:
+              - 27017:27017
+            options: >-
+              --health-cmd "mongosh --eval 'db.adminCommand('ping')""
+              --health-interval 10s
+              --health-timeout 5s
+              --health-retries 5
+
         steps:
             - uses: actions/checkout@v4
             - uses: actions/setup-node@v4
@@ -24,3 +36,14 @@ jobs:
 
             - name: Run linter
               run: npm run lint
+
+            - name: Start the test server database
+              run: npm run start:test &
+              env:
+                MONGODB_TEST_URI: ${{ secrets.MONGODB_TEST_URI }}
+            
+            - name: Wait for server to be ready
+              run: sleep 10
+            
+            - name: Run JEST/Supertest Integration test suites
+              run: npm run test
