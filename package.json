@@ -6,7 +6,7 @@
   "scripts": {
     "start": "cross-env NODE_ENV=PRODUCTION node index.js",
     "start:test": "cross-env NODE_ENV=TEST node index.js",
-    "test": "cross-env NODE_ENV=TEST jest --verbose --runInBand",
+    "test": "cross-env NODE_ENV=TEST jest --verbose --runInBand --ci --reporters=default --reporters=jest-junit",
     "dev": "cross-env NODE_ENV=DEVELOPMENT nodemon index.js",
     "lint": "eslint ."
   },
