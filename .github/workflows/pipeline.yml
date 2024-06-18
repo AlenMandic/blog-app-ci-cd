@@ -40,6 +40,6 @@ jobs:
             - name: Run JEST/Supertest integration test suites
               run: |
                echo "Starting test server"
-               npm run test &
+               npm run test
               env:
                 MONGODB_TEST_URI: ${{ secrets.MONGODB_TEST_URI }}

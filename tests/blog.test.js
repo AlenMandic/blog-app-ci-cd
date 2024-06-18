@@ -104,7 +104,7 @@ describe('Validation for username and password', () => {
     }
 
     const registerUser = await api.post('/users').send(newTestBadUserUsername)
-    expect(registerUser.status).toBe(200)
+    expect(registerUser.status).toBe(400)
   })
 
   test('Ensuring invalid password cant be added to DB', async () => {
