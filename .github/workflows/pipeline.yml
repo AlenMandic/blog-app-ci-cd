@@ -34,13 +34,10 @@ jobs:
             - name: Install dependencies
               run: npm install
 
-            - name: Checking ENV variables
-              run: echo "TESTING_URL=${{ secrets.MONGODB_TEST_URI }}" >> $GITHUB_ENV
-
             - name: Run linter
               run: npm run lint
 
-            - name: Start the test server database
+            - name: Run JEST/Supertest integration test suites
               run: |
                echo "Starting test server"
                npm run test &
