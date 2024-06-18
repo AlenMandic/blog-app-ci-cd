@@ -1,50 +1,54 @@
-name: CI/CD Pipeline
+name: Deployment pipeline
 
 on:
+  # schedule:
+  #  - cron: "0 18 * * *"
   push:
     branches:
       - master
   pull_request:
-    branches: [master]
+    branches: [master] # workflow will trigger when someone makes a pull request to the 'master' branch
     types: [opened, synchronize]
 
 jobs:
-  deployment_pipeline:
-    runs-on: ubuntu-20.04
+    deployment_pipeline:
+        runs-on: ubuntu-20.04
 
-    services:
-      mongo:
-        image: mongo:latest
-        ports:
-          - 27017:27017
-        options: >-
-          --health-cmd "mongosh --eval 'db.adminCommand(\"ping\")'"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
+        services:
+          mongo:
+            image: mongo:latest
+            ports:
+              - 27017:27017
+            options: >-
+              --health-cmd "mongosh --eval 'db.adminCommand(\"ping\")'"
+              --health-interval 10s
+              --health-timeout 5s
+              --health-retries 5
 
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
+        steps:
+            - uses: actions/checkout@v4
+            - uses: actions/setup-node@v4
+              with:
+                node-version: 20
+            
+            - name: Install dependencies
+              run: npm install
 
-      - name: Install dependencies
-        run: npm install
+            - name: Checking ENV variables
+              run: echo "TESTING_URL=${{ secrets.MONGODB_TEST_URI }}" >> $GITHUB_ENV
 
-      - name: Run linter
-        run: npm run lint
+            - name: Run linter
+              run: npm run lint
 
-      - name: Start the test server database
-        run: |
-          echo "Starting test server"
-          MONGODB_TEST_URI=${{ secrets.MONGODB_TEST_URI }} NODE_ENV=TEST npm run start:test &
-
-      - name: Wait for server to be ready
-        run: sleep 10
-
-      - name: Run JEST/Supertest Integration test suites
-        run: npm run test
-        env:
-          NODE_ENV: TEST
-          MONGODB_TEST_URI: ${{ secrets.MONGODB_TEST_URI }}
+            - name: Start the test server database
+              run: |
+               echo "Starting test server"
+               npm run start:test &
+              env:
+                MONGODB_TEST_URI: ${{ secrets.MONGODB_TEST_URI }}
+            
+            - name: Wait for server to be ready
+              run: sleep 10
+            
+            - name: Run JEST/Supertest Integration test suites
+              run: npm run test
