@@ -43,10 +43,6 @@ jobs:
             - name: Start the test server database
               run: |
                echo "Starting test server"
-               npm run start:test &
-            
-            - name: Wait for server to be ready
-              run: sleep 10
-            
-            - name: Run JEST/Supertest Integration test suites
-              run: npm run test
+               npm run test &
+              env:
+                MONGODB_TEST_URI: ${{ secrets.MONGODB_TEST_URI }}
