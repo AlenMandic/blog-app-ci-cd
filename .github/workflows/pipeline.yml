@@ -43,3 +43,4 @@ jobs:
                npm run test
               env:
                 MONGODB_TEST_URI: ${{ secrets.MONGODB_TEST_URI }}
+                SECRET: ${{ secrets.SECRET }}
