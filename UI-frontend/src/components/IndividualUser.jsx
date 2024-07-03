@@ -4,7 +4,7 @@ import { useGetUserLikedBlogs } from '../custom-hooks/useGetUserLikedBlogs'
 import ExploreBlog from './ExploreBlog'
 import Alert from '@mui/material/Alert'
 import LoadingSpinner from '../mui-components/LoadingSpinner'
-import { Container, Typography } from '@mui/material'
+import { Container } from '@mui/material'
 
 export default function UserPage({ user }) {
 
