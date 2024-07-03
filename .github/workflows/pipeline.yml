@@ -44,3 +44,23 @@ jobs:
               env:
                 MONGODB_TEST_URI: ${{ secrets.MONGODB_TEST_URI }}
                 SECRET: ${{ secrets.SECRET }}
+
+            - name: Install front-end dependencies
+              working-directory: ./UI-frontend
+              run: npm install
+
+            - name: Build out the front-end
+              working-directory: ./UI-frontend
+              run: npm run build
+
+            - name: Move front-end build to backend
+              run: |
+               rm -rf ./dist
+               mv ./UI-frontend/dist ./
+
+            - name: End-to-end tests using Cypress
+              uses: cypress-io/github-action@v6.7.1
+              with:
+                command: npm run cypress:open 
+                start: npm run start-test
+                wait-on: http://localhost:3003
