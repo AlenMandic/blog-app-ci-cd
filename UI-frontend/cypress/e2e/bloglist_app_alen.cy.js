@@ -17,8 +17,8 @@ describe('Blog posting app', () => {
     cy.visit(`${baseUrl}/api/login`)
     cy.contains('Sign in').click()
     cy.get('#username-input').type('testingusername1') // an element with an id of username
-    cy.get('#password-input').type('testingpassword1')
-    cy.contains('SIGN IN').click()
+    cy.get('#password-input').type('Testingpassword1#########')
+    cy.contains('Sign in').click()
 
     cy.contains('Logged in as testingname1')
   })

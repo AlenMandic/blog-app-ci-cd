@@ -10,6 +10,10 @@ const initialBlogs = [
     author: 'Random author 1',
     url: 'Random url 1',
     likes: 55,
+    postedBy: {
+      username: 'Random user 1',
+      id: 'Random id 1'
+    },
     comments: [
       {
         postedBy: {
@@ -25,6 +29,10 @@ const initialBlogs = [
     author: 'Random author 2',
     url: 'Random url 2',
     likes: 34,
+    postedBy: {
+      username: 'Random user 2',
+      id: 'Random id 2'
+    },
     comments: [
       {
         postedBy: {
@@ -40,6 +48,10 @@ const initialBlogs = [
     author: 'Random author 3',
     url: 'Random url 3',
     likes: 55,
+    postedBy: {
+      username: 'Random user 3',
+      id: 'Random id 3'
+    },
     comments: [
       {
         postedBy: {
@@ -50,7 +62,6 @@ const initialBlogs = [
       }
     ]
   },
-  // Add more blog objects as needed
 ];
 
 // return a list of blogs.
