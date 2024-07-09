@@ -62,6 +62,8 @@ jobs:
               run: |
                 npm run start:test &
                 sleep 10
+              env:
+                  MONGODB_TEST_URI: ${{ secrets.MONGODB_TEST_URI }}
 
             - name: End-to-end tests using Cypress
               uses: cypress-io/github-action@v5
@@ -69,5 +71,3 @@ jobs:
                 working-directory: ./UI-frontend
                 wait-on: http://localhost:3003
                 command: npm run cypress:run
-              env:
-                  MONGODB_TEST_URI: ${{ secrets.MONGODB_TEST_URI }}
