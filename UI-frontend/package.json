@@ -9,7 +9,7 @@
     "test": "jest",
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
-    "cypress:open": "cypress open"
+    "cypress:run": "cypress run"
   },
   "dependencies": {
     "@emotion/react": "^11.11.1",

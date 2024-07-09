@@ -70,4 +70,4 @@ jobs:
               with:
                 working-directory: ./UI-frontend
                 wait-on: http://localhost:3003
-                command: npm run cypress:open
+                command: npm run cypress:run
