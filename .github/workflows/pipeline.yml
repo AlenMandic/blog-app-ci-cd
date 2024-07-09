@@ -58,9 +58,14 @@ jobs:
                rm -rf ./dist
                mv ./UI-frontend/dist ./
 
+            - name: Start the backend testing server
+              run: |
+                npm run start:test &
+                sleep 10
+
             - name: End-to-end tests using Cypress
-              uses: cypress-io/github-action@v6.7.1
+              uses: cypress-io/github-action@v5
               with:
-                command: npm run cypress:open 
-                start: npm run start-test
+                working-directory: ./UI-frontend
                 wait-on: http://localhost:3003
+                command: npm run cypress:open
