@@ -71,3 +71,19 @@ jobs:
                 working-directory: ./UI-frontend
                 wait-on: http://localhost:3003
                 command: npm run cypress:run
+
+            - name: Send Discord workflow notification failure
+              uses: rjstone/discord-webhook-notify@v1
+              if: failure()
+              with:
+                severity: error
+                details: Build proccess failed!
+                webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
+
+            - name: Send Discord workflow notification success
+              uses: rjstone/discord-webhook-notify@v1
+              if: success()
+              with:
+                severity: info
+                details: Workflow has finished without errors!
+                webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
