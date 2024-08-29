@@ -48,7 +48,7 @@ export default function CreateSignUpForm({ user, showSuccessMessageCallback, set
           resetForm()
           return response
 
-         } catch(err) {
+         } catch(err) { // THIS NEEDS TO RETURN ACTUAL ERR MESSAGE NOT HARDCODED MSG, FIX?!
           showErrorNotification('An error occured while registering your account.', setNotificationError)
          }
       }

@@ -65,7 +65,7 @@ export default function SignInSide({ username, setUsername, password, setPasswor
             <LockOutlinedIcon />
           </Avatar>
           <Typography component="h1" variant="h5">
-            Sign in
+            Log in
           </Typography>
           <Box component="form" onSubmit={handleLogin} sx={{ mt: 1 }} autoComplete='login-form'>
           <TextField
