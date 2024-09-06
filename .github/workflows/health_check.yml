@@ -1,0 +1,20 @@
+name: Periodic health checking system
+
+on:
+    schedule:
+    - cron: "0 18 * * *"
+    push:
+      branches:
+        - master
+
+jobs:
+    health_checking:
+        runs-on: ubuntu-20.04
+        steps:
+
+            - name: Check the deployed service URL  # Run a health check
+              uses: jtalk/url-health-check-action@v4
+              with:
+                url: https://snapblog.fly.dev
+                max-attempts: 3
+                retry-delay: 5s
