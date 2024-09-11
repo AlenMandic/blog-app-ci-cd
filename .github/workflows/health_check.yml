@@ -1,8 +1,8 @@
 name: Periodic health checking system
 
 on:
-    schedule:
-    - cron: "0 18 * * *" # scheduled to run once every day at 6pm
+    # schedule:
+    # - cron: "0 18 * * *" # scheduled to run once every day at 6pm
     push:
       branches:
         - master
@@ -13,8 +13,9 @@ jobs:
         steps:
 
             - name: Check the deployed service URL
-              uses: jtalk/url-health-check-action@v4
-              with:
-                url: https://snapblog.fly.dev
-                max-attempts: 3
-                retry-delay: 5s
+              # uses: jtalk/url-health-check-action@v4
+              # with:
+              #   url: https://snapblog.fly.dev
+              #   max-attempts: 3
+              #   retry-delay: 5s
+              run: echo "Health checking currently not needed"
