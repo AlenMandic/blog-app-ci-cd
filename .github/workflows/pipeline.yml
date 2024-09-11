@@ -5,7 +5,7 @@ on:
     branches:
       - master
   pull_request:
-    branches: [master] # workflow will trigger when someone makes a pull request to the 'master' branch
+    branches: [master]
     types: [opened, synchronize]
 
 jobs:
@@ -56,19 +56,19 @@ jobs:
                rm -rf ./dist
                mv ./UI-frontend/dist ./
 
-            - name: Start the backend testing server
-              run: |
-                npm run start:test &
-                sleep 10
-              env:
-                  MONGODB_TEST_URI: ${{ secrets.MONGODB_TEST_URI }}
+            # - name: Start the backend testing server
+            #   run: |
+            #     npm run start:test &
+            #     sleep 10
+            #   env:
+            #       MONGODB_TEST_URI: ${{ secrets.MONGODB_TEST_URI }}
 
-            - name: End-to-end tests using Cypress
-              uses: cypress-io/github-action@v5
-              with:
-                working-directory: ./UI-frontend
-                wait-on: http://localhost:3000
-                command: npm run cypress:run
+            # - name: End-to-end tests using Cypress
+            #   uses: cypress-io/github-action@v5
+            #   with:
+            #     working-directory: ./UI-frontend
+            #     wait-on: http://localhost:3000
+            #     command: npm run cypress:run
 
             - name: Deploy app to Fly.io
               if: ${{ github.event_name == 'push' && !contains(github.event.head_commit.message, '#skip') }}

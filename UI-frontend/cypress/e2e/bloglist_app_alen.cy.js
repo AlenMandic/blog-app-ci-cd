@@ -1,7 +1,7 @@
 /* eslint-disable */
 describe('Blog posting app', () => {
 
-    const baseUrl = 'http://localhost:3000'
+  const baseUrl = 'http://localhost:3000'
 
   it('Front page is rendered and contains a blog', function()  {
     cy.visit(`${baseUrl}`)
@@ -22,7 +22,7 @@ describe('Blog posting app', () => {
     cy.wait(2000)
     cy.visit(`${baseUrl}/api/login`)
     cy.contains('Sign In').click()
-    cy.get('#username-input').type('testingusername1') // an element with an id of username
+    cy.get('#username-input').type('testingusername1')
     cy.get('#password-input').type('Testingpassword1#########')
     cy.contains('Sign In').click()
 
