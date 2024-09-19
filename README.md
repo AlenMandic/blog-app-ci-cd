@@ -4,6 +4,8 @@
 
 This project was made with the intention of having a website to save and browse other curated unique blog posts from around the internet. When searching for interesting blog posts via google you will only find entire blogs, and finding unique and interesting individual blog posts can be very hard.
 
+IN PROGRESS/COMING SOON: Code optimization and improvements, design overhaul, search function/vector search for blogs
+
 # Testing
 
 - End-to-end tests were implemented using Cypress.IO
