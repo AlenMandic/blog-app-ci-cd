@@ -1,14 +1,17 @@
-# Back-end repository / web service for my blog sharing social media website using NodeJS/Express, MongoDB & Mongoose / Fly.io
+# Blog-sharing social media app
 
-# Link to deployed site: https://blog-list-app-backend.fly.dev
+# Live website: https://snapblog.fly.dev
 
-- Express back-end for a blog sharing mini social media site. The project follows best practices regarding folder structure and uses `REST-ful` API standards for serving data.
+This project was made with the intention of having a website to save and browse other curated unique blog posts from around the internet. When searching for interesting blog posts via google you will only find entire blogs, and finding unique and interesting individual blog posts can be very hard.
+
+IN PROGRESS/COMING SOON: Code optimization and improvements, design overhaul, search function/vector search for blogs
 
 # Testing
 
-- Integration testing was implemented using `JEST` and the `Supertest` package.
-- Tests can be found in `/tests/blog.test.js` alongside the helper test functions which allow us to test our application in almost any way we want.
-- Basic API testing was also done using `Postman`
+- End-to-end tests were implemented using Cypress.IO
+- Integration tests were implemented using JEST and Supertest, and a file containing helper functions and methods for testing.
+- Testing is done on a special testing database, not the live production database.
+- Basic API testing was done using `Postman`
 - Linting was setup using `ESlint`
 
 # Controllers
@@ -19,16 +22,15 @@
 
 # Utils
 - Contains a lot of our logic and utility functions/middlewares. 
-- `config.js` sets up all of our enviroment variables, ports, and secrets from our `.env` file
+- `config.js` sets up all of our enviroment variables, ports, and secrets from our `.env` file.
 - `logger.js` contains a more concise way of displaying informational or error messages throughout our app.
 - `rateLimitMiddleware.js` contains a rate limiter for our app using the `express-rate-limit` package. Currently it is setup as a global route limiter, ensuring our application can't be infinitely spammed/brute-forced with requests.
 
 # /Utils/middleware.js
-- `middleware.js` contains most of our important middlewares, such as a `requestLogger` which displays basic information for every incoming request.
-- `getTokenFrom` which is a function used to resolve token in requests
-- `userExtractorMiddleware` which runs on our protected / authenticated routes, and finds out which `User` is making the request.
+- `getTokenFrom` decodes and validates JSON web tokens found in the headers of incoming requests from the client.
+- `userExtractor` which runs on our protected / authenticated routes, finds out which User is making the request.
 - `unknownEndpoint` which handles unknown endpoint requests.
-- `errorHandler` which is the first error-handler in our app, handles our potential errors by the `error.name` property
+- `errorHandler` handles our potential errors.
 
 # app.js
 - handles the biggest part of our app logic, establishes a connection to our database, and handles middleware ordering.
@@ -36,11 +38,21 @@
 # index.js
 - Starts the express application using `app.listen`, and listens for requests on our designated `PORT`
 
-# User authentication / App security
-- When a user is creating an account, a strong minimum 15 character password with atleast: 1 capital letter, 1 number and 1 special character is enforced.
-- All of our inputs/forms are sanitized/validated both on the front-end repository, and this one, using `mongoose` and the `mongoose-unique-validator` package
-- Passwords are hashed and salted/encrypted using the `bycrypt` package.
-- When a user attempts to log in, we first make sure the password is correct using `bcrypt.compare` function. If the credentials are good, the user will receive back a JSON web token which has a 1 hour expiry date, and contains his username and id. The front-end will then be able to work with the authenticated user and his information.
-- Each token is signed/checked against our secret variable.
+# UI / Front-End
 
-- When working with JSON web tokens XSS attacks(cross-site-scripting, malicious script injections) are always a cause for concern. In order to best secure my application and prevent those attacks, our app uses the 'helmet` package which is recommended by Express to mitigate some well-known web vulnerabilities by setting HTTP headers appropriately, including  cross-site scripting attacks.
+- `Material UI` was used to style the website.
+
+- `Axios` was used to handle services
+
+- `React Router` was used to separate the website into relevant pages to enable full link sharing and a better user experience
+
+- Pagination system and a sorting system was implemented
+
+- The `services` folder contains all the logic for talking to our back-end and database
+- `utils.js` exports commonly re-used functions across the project
+- App will show various error, success or info notifications to the user depending on the status of their operations on the website.
+- Handling of unknown or incorrect routes has been implemented using React Router
+
+# Asynchronous state managament
+- We control and synchronize state with an external system ( our MongoDB database ) using my own written custom hooks to handle fetching data, loading and error states
+
