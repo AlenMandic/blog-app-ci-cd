@@ -21,6 +21,7 @@ useEffect(() => {
 }, [getUserLikedBlogs, blogObject.id])
 
   async function handleBlogLike() {
+
     if (!user) {
       alert('Please log in to like blogs.')
       return null
@@ -33,6 +34,7 @@ useEffect(() => {
   }
 
   async function handleBlogDislike() {
+  
     if (!user) {
       alert('Please log in to like blogs.')
       return null

@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Button, TextField } from '@mui/material'
+import { Button, TextField, Box } from '@mui/material'
 import SendIcon from '@mui/icons-material/Send'
 
 export default function CommentForm ({ onSubmit }) {
@@ -16,27 +16,41 @@ export default function CommentForm ({ onSubmit }) {
   }
 
   return (
-    <form onSubmit={handleSubmit} style={{ marginLeft: '-45px', minWidth: '18rem', maxWidth: '50%' }}>
+    <Box component="form" onSubmit={handleSubmit} sx={{ width: '100%', maxWidth: '600px' }}>
       <TextField
         label="Add a comment"
-        variant="filled"
+        variant="outlined"
         multiline
-        rows={2}
+        rows={3}
         fullWidth
         value={comment}
         onChange={handleCommentChange}
-        sx={{ marginBottom: 2, border: 'solid 1px black', borderRadius: '4px', backgroundColor: 'white'  }}
+        sx={{
+          borderBottom: 'solid 4px black',
+          marginBottom: 2,
+          '& .MuiOutlinedInput-root': {
+            backgroundColor: 'background.paper',
+            '&:hover': {
+              backgroundColor: 'action.hover',
+            },
+          },
+        }}
         inputProps={{ minLength: 3, maxLength: 200 }}
       />
       <Button
         type="submit"
-        variant="outlined"
+        variant="contained"
         color="primary"
-        sx={{ border: 'solid 1px black', color: 'black', backgroundColor: 'white' }}
+        sx={{
+          borderRadius: '20px',
+          padding: '8px 24px',
+          textTransform: 'none',
+          fontWeight: 'bold',
+        }}
         endIcon={<SendIcon />}
       >
         Send
       </Button>
-    </form>
+    </Box>
   )
 }

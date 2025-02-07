@@ -1,5 +1,5 @@
 import axios from 'axios'
-const baseUrl = '/users'
+const baseUrl = 'http://localhost:3000/users'
 
 const getAllUsers = async () => {
 
@@ -8,7 +8,7 @@ const getAllUsers = async () => {
         return response.data
 
     } catch(err) {
-        console.log(err)
+        throw err.response?.data?.error || err.message || 'An unknown error occured'
     }
 }
 
@@ -20,12 +20,19 @@ const getIndividualUser = async (userId) => {
        return response.data
 
     } catch(err) {
-        console.log(err)
 
-        if(err.response.status === 404) {
-            return err.response.status
-        } else if(err.response.status === 400) {
-            return err.response.status
+        if (err.response) {
+            if (err.response.status === 404) {
+                throw new Error('User not found');
+            } else if (err.response.status === 400) {
+                throw new Error('Invalid user ID');
+            } else {
+                throw new Error(`Server error: ${err.response.status}`);
+            }
+        } else if (err.request) {
+            throw new Error('No response received from server');
+        } else {
+            throw new Error('Error setting up the request');
         }
     }
 }

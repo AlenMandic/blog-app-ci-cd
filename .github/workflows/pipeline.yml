@@ -57,16 +57,16 @@ jobs:
                rm -rf ./dist
                mv ./UI-frontend/dist ./
 
-            # - name: Start the backend testing server
-            #   run: |
+            #- name: Start the backend testing server
+            #  run: |
             #     npm run start:test &
             #     sleep 10
-            #   env:
-            #       MONGODB_TEST_URI: ${{ secrets.MONGODB_TEST_URI }}
+            #  env:
+            #      MONGODB_TEST_URI: ${{ secrets.MONGODB_TEST_URI }}
 
-            # - name: End-to-end tests using Cypress
-            #   uses: cypress-io/github-action@v5
-            #   with:
+            #- name: End-to-end tests using Cypress
+            #  uses: cypress-io/github-action@v5
+            #  with:
             #     working-directory: ./UI-frontend
             #     wait-on: http://localhost:3000
             #     command: npm run cypress:run

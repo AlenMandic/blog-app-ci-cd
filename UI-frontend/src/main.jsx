@@ -3,8 +3,7 @@ import ReactDOM from 'react-dom/client'
 import App from './App.jsx'
 import CssBaseline from '@mui/material/CssBaseline'
 import { createTheme, ThemeProvider } from '@mui/material/styles'
-
-//'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif
+import { AuthProvider } from './components/AuthProvider.jsx'
 
 const theme = createTheme({
   typography: {
@@ -16,7 +15,9 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     <ThemeProvider theme={theme}>
      <CssBaseline />
       <React.StrictMode>
-       <App />
+       <AuthProvider>
+        <App />
+       </AuthProvider>
       </React.StrictMode>
     </ThemeProvider>
 )

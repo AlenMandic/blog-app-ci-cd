@@ -1,23 +1,22 @@
 import { React, useState } from 'react'
 import loginService from '../services/handleSignUpLogin'
-import { NotificationError } from './Notification'
 import SignUp from '../mui-components/Sign-up'
 import { useNavigate } from 'react-router-dom'
-import { showErrorNotification } from '../utils'
+import { useNotification } from '../custom-hooks/useNotification'
 
-export default function CreateSignUpForm({ user, showSuccessMessageCallback, setNotificationSuccess }) {
+export default function CreateSignUpForm({ user }) {
 
     const navigate = useNavigate()
+
+    const { ErrorNotification, SuccessNotification, showErrorNotification, showSuccessNotification } = useNotification();
 
     const [username, setUsername] = useState('')
     const [name, setName] = useState('')
     const [password, setPassword] = useState('')
     const [repeatPassword, setRepeatPassword] = useState('')
 
-    const [notificationError, setNotificationError] = useState(null)
-
-      function handleShowMessageCallback() {
-        showSuccessMessageCallback('Your account has been created successfully! You may now log in.', setNotificationSuccess)
+      function handleShowMessage() {
+        showSuccessNotification('Your account has been created successfully! You may now log in.')
       }
 
       function resetForm() {
@@ -31,7 +30,7 @@ export default function CreateSignUpForm({ user, showSuccessMessageCallback, set
         e.preventDefault()
 
         if(password !== repeatPassword) {
-            showErrorNotification('Passwords dont match!', setNotificationError)
+            showErrorNotification('Passwords dont match!')
             return null
         }
 
@@ -41,20 +40,22 @@ export default function CreateSignUpForm({ user, showSuccessMessageCallback, set
           const response = await loginService.registerUser(newUser)
 
           if(response.status === 201) {
-            handleShowMessageCallback()
+            handleShowMessage()
             navigate('/api/login')
           }
 
           resetForm()
           return response
 
-         } catch(err) { // THIS NEEDS TO RETURN ACTUAL ERR MESSAGE NOT HARDCODED MSG, FIX?!
-          showErrorNotification('An error occured while registering your account.', setNotificationError)
+         } catch(err) {
+          console.log(err)
+          showErrorNotification(err.toString())
          }
       }
 
     return <>
-      <NotificationError message={notificationError} />
+      <ErrorNotification />
+      <SuccessNotification />
       <SignUp user={user} setUsername={setUsername} username={username} name={name} setName={setName} password={password} setPassword={setPassword} repeatPassword={repeatPassword} setRepeatPassword={setRepeatPassword} handleSignUp={handleSignUp} />
       </>
       }

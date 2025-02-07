@@ -1,9 +1,7 @@
 import { React, useState } from 'react'
 import blogService from '../services/handleBlogs'
-import { NotificationError, NotificationSuccess } from './Notification'
 import { Button, TextField, Typography } from '@mui/material'
-import SendIcon from '@mui/icons-material/Send'
-import { showErrorNotification, showSuccessNotification } from '../utils'
+import { useNotification } from '../custom-hooks/useNotification'
 
 export default function AddBlog({ updateUserPageState }) {
 
@@ -11,9 +9,9 @@ export default function AddBlog({ updateUserPageState }) {
   const [author, setAuthor] = useState('')
   const [url, setUrl] = useState('')
   const [likes, setLikes] = useState(0)
-  const [notificationError, setNotificationError] = useState(null)
-  const [notificationSuccess, setNotificationSuccess] = useState(null)
   const [showBlogForm, setShowBlogForm] = useState(false)
+
+  const { ErrorNotification, SuccessNotification, showErrorNotification, showSuccessNotification } = useNotification();
 
   function resetOurForm() {
     setTitle('')
@@ -35,11 +33,11 @@ export default function AddBlog({ updateUserPageState }) {
       updateUserPageState(result.data) // updates the state of our user and explore data with new post. addBlogForm -> App.jsx
 
       setShowBlogForm(!showBlogForm)
-      showSuccessNotification('Blog added successfully.', setNotificationSuccess)
+      showSuccessNotification('Blog added successfully.')
       return result.data
 
-    } catch(error) {
-      showErrorNotification(error.message, setNotificationError)
+    } catch(err) {
+      showErrorNotification(error.response?.data?.error || err.message || 'An unknown error occured')
     }
   }
 
@@ -51,64 +49,49 @@ export default function AddBlog({ updateUserPageState }) {
     if(showBlogForm) {
       return (
         <>
-          <NotificationError message={notificationError} />
-          <NotificationSuccess message={notificationSuccess} />
+          <ErrorNotification />
+          <SuccessNotification />
           {' '}
-          <form onSubmit={handleBlogSubmit} style={{ backgroundColor: 'white', width: '290px', height: '400px', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', borderRadius: '8px' }}>
-
-          <Typography variant="h5" sx={{ mt: '20px' }}>Post a new blog</Typography>
-            <div>
-            <TextField variant="outlined" label="Title" type="text" name="title-input"  required value={title} onChange={({
-                target
-              }) => setTitle(target.value)}
-               style={{ margin: '5px' }}
-                inputProps={{
-                minLength: '5',
-                 maxLength: '60',
-              }}></TextField>
-            </div>
-            <div>
-            <TextField variant="outlined" label="Author" type="text" name="author-input"  required value={author} onChange={({
-                target
-              }) => setAuthor(target.value)}
-               style={{ margin: '5px' }}
-                inputProps={{
-                minLength: '5',
-                 maxLength: '60'
-              }}></TextField>
-            </div>
-            <div>
-            <TextField variant="outlined" label="URL" type="text" name="url-input"  required value={url} onChange={({
-                target
-              }) => setUrl(target.value)}
-               style={{ margin: '5px' }}
-                inputProps={{
-                minLength: '5',
-                 maxLength: '100'
-              }}></TextField>
-            </div>
-            <div>
-            <TextField variant="outlined" label="Likes" type="number" name="likes-input" value={likes} onChange={({
-                target
-              }) => setLikes(target.value)}
-               style={{ margin: '5px' }}
-                inputProps={{
-                minLength: '5',
-                 maxLength: '60'
-              }}></TextField>
-            </div>
-            <div>
-              <Button variant="outlined" type="submit" sx={{ fontWeight: '600', my: '15px', border: 'solid 1px black', color: 'black', mr: '12px', backgroundColor: 'white' }} endIcon={<SendIcon />}>Post</Button>
-              <Button variant="outlined" onClick={handleShowPostBlogForm} sx={{ fontWeight: '600', border: 'solid 1px black', color: 'black', backgroundColor: 'white' }}>Cancel</Button>
+          <form onSubmit={handleBlogSubmit} style={{ 
+            backgroundColor: 'white', 
+            width: '100%', 
+            maxWidth: '400px', // Set a max width for better responsiveness
+            padding: '20px', // Add padding for better spacing
+            borderRadius: '8px', 
+            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', // Add a subtle shadow for depth
+            display: 'flex', 
+            flexDirection: 'column', 
+            alignItems: 'center' 
+          }}>
+            <Typography variant="h5" sx={{ mb: 2 }}>Post a new blog</Typography>
+            <TextField variant="outlined" label="Title" type="text" name="title-input" required value={title} onChange={({ target }) => setTitle(target.value)} 
+              sx={{ mb: 2, width: '100%' }} // Full width and margin bottom
+              inputProps={{ minLength: 5, maxLength: 60 }} 
+            />
+            <TextField variant="outlined" label="Author" type="text" name="author-input" required value={author} onChange={({ target }) => setAuthor(target.value)} 
+              sx={{ mb: 2, width: '100%' }} 
+              inputProps={{ minLength: 5, maxLength: 60 }} 
+            />
+            <TextField variant="outlined" label="URL" type="text" name="url-input" required value={url} onChange={({ target }) => setUrl(target.value)} 
+              sx={{ mb: 2, width: '100%' }} 
+              inputProps={{ minLength: 5, maxLength: 100 }} 
+            />
+            <TextField variant="outlined" label="Likes" type="number" name="likes-input" value={likes} onChange={({ target }) => setLikes(target.value)} 
+              sx={{ mb: 2, width: '100%' }} 
+              inputProps={{ min: 0 }} // Ensure likes can't be negative
+            />
+            <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
+              <Button variant="contained" type="submit" sx={{ fontWeight: '600', my: '15px', flexGrow: 1, mr: 1 }}>Post</Button>
+              <Button variant="outlined" onClick={handleShowPostBlogForm} sx={{ fontWeight: '600', flexGrow: 1, ml: 1 }}>Cancel</Button>
             </div>
           </form>
         </>
       )
     } else {
       return <>
-          <NotificationError message={notificationError} />
-          <NotificationSuccess message={notificationSuccess} />
-          <Button variant="outlined" onClick={handleShowPostBlogForm} sx={{ fontWeight: '600', width: '200px', height: '60px', my: '30px', border: 'solid 1px black', color: 'black', backgroundColor: 'white' }} endIcon={<SendIcon />}>Post a new blog</Button>
+          <ErrorNotification />
+          <SuccessNotification />
+          <Button variant="contained" onClick={handleShowPostBlogForm} sx={{ fontWeight: '600', width: '100%', maxWidth: '200px', my: '30px' }}>Post a new blog</Button>
             </>
     }
   }

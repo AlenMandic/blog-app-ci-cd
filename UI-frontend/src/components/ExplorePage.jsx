@@ -1,15 +1,16 @@
-import { useState, useEffect, React } from 'react'
+import { useState, React } from 'react'
+import { Typography, Button, Box, Alert, Container, useTheme, useMediaQuery } from '@mui/material';
 import ExploreBlog from './ExploreBlog'
 import BasicSelect from '../mui-components/SelectMenu'
-import { Button } from '@mui/material'
-import { Box } from '@mui/material'
-import Alert from '@mui/material/Alert'
 import { useGetUserLikedBlogs } from '../custom-hooks/useGetUserLikedBlogs'
 import { useCreateExplorePage } from '../custom-hooks/useCreateExplorePage'
 import LoadingSpinner from '../mui-components/LoadingSpinner'
 
-// Returns all blogs and who they belong to. IF someone is logged in, they can like the blog, increasing it's like counter by 1. Implementing infinite scrolling here would be great.
 export default function ExplorePage({ user }) {
+
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const isSmallScreen = useMediaQuery('(max-width:500px)');
 
   const [sorting, setSorting] = useState('Default')
 
@@ -24,7 +25,9 @@ export default function ExplorePage({ user }) {
     return <p>Error: {error.message}</p>
   }
 
-  const ourPublicBlogs = explorePageState.map((blog) => blog)
+  const ourPublicBlogs = explorePageState.map((blog) => {
+    return blog
+  })
 
   function compareBlogsByLikes(a, b) {
     return b.likes - a.likes
@@ -33,7 +36,7 @@ export default function ExplorePage({ user }) {
   const getBlogsByLikes = ourPublicBlogs.sort(compareBlogsByLikes)
 
   const renderBlogsByLikes = (
-    <ul>
+    <ul style={{ marginLeft: '-45px' }}>
       {getBlogsByLikes.map((blog) => (
         <ExploreBlog
           key={blog.id}
@@ -49,7 +52,7 @@ export default function ExplorePage({ user }) {
   )
 
   const renderBlogsByDefault = (
-    <ul>
+    <ul style={{ marginLeft: '-45px' }}>
       {explorePageState.map((blog) => (
         <ExploreBlog
           key={blog.id}
@@ -72,17 +75,93 @@ export default function ExplorePage({ user }) {
   }
 
   return (
-    <div>
-      <h1 style={{ color: 'black' }}>Front Page</h1>
-      <h3  style={{ color: 'black' }}>Explore blogs posted by others and interact with them.</h3>
-      <BasicSelect sorting={sorting} setSorting={setSorting} />
-      {returnSortedPage}
-      <Box display="flex" alignItems="center" justifyContent="center">
-
-      {loadMoreButtonVisible && <Button variant="outlined" onClick={handleLoadMore} sx={{ fontWeight: '600', marginTop: '80px', minWidth: '30%', height: '60px', backgroundColor: 'white', color: 'black', border: 'solid 1px black' }}>Load More Blogs</Button>}
-
-      {!loadMoreButtonVisible && <Alert severity="info" sx={{ marginTop: '40px', backgroundColor: '#1f1f54', color: 'white', fontSize: '18px', }}>No more blogs left to load in !</Alert>}
+    <Container maxWidth="lg" disableGutters>
+    <Box sx={{ px: { xs: 2, sm: 3, md: 4 }, mt: 4 }}>
+    <Typography 
+          variant={isMobile ? "h4" : "h3"} 
+          component="h1" 
+          gutterBottom 
+          sx={{ 
+            fontWeight: 'bold', 
+            color: 'blue',
+            fontSize: {
+              xs: '1.75rem',  // extra-small devices
+              sm: '2.5rem',   // small devices
+              md: '3rem'      // medium devices and up
+            }
+          }}
+        >
+          Front Page
+        </Typography>
+        <Typography 
+          variant={isMobile ? "h6" : "h5"} 
+          gutterBottom 
+          sx={{ 
+            color: 'text.secondary', 
+            mb: 4,
+            fontSize: {
+              xs: '1rem',     // extra-small devices
+              sm: '1.25rem',  // small devices
+              md: '1.5rem'    // medium devices and up
+            }
+          }}
+        >
+          Explore blogs posted by others and interact with them.
+        </Typography>
+      
+      <Box sx={{ mb: 4, mt: 2 }}>
+        <BasicSelect sorting={sorting} setSorting={setSorting} />
       </Box>
-    </div>
+      
+      <Box sx={{ 
+          mb: 4, 
+          display: isSmallScreen ? 'flex' : 'block',
+          justifyContent: isSmallScreen ? 'center' : 'flex-start',
+          alignItems: isSmallScreen ? 'center' : 'flex-start',
+        }}>
+          {returnSortedPage}
+        </Box>
+      
+      <Box display="flex" alignItems="center" justifyContent="center">
+        {loadMoreButtonVisible && (
+          <Button 
+            variant="outlined" 
+            onClick={handleLoadMore} 
+            sx={{ 
+              fontWeight: 600, 
+              py: 2, 
+              px: 4, 
+              minWidth: { xs: '80%', sm: '50%', md: '30%' },
+              backgroundColor: 'background.paper',
+              color: 'primary.main',
+              borderColor: 'primary.main',
+              '&:hover': {
+                backgroundColor: 'primary.main',
+                color: 'background.paper',
+              }
+            }}
+          >
+            Load More Blogs
+          </Button>
+        )}
+        
+        {!loadMoreButtonVisible && (
+          <Alert 
+            severity="info" 
+            sx={{ 
+              mt: 4, 
+              backgroundColor: 'primary.dark', 
+              color: 'background.paper', 
+              fontSize: { xs: '16px', sm: '18px' },
+              width: '100%',
+              justifyContent: 'center'
+            }}
+          >
+            No more blogs left to load!
+          </Alert>
+        )}
+      </Box>
+    </Box>
+  </Container>
   )
 }

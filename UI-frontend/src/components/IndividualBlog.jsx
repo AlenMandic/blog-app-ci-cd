@@ -1,87 +1,113 @@
+import React from 'react'
 import { useParams } from 'react-router-dom'
 import { useIndividualBlog } from '../custom-hooks/useIndividualBlog'
 import { useGetUserLikedBlogs } from '../custom-hooks/useGetUserLikedBlogs'
 import handleBlogs from '../services/handleBlogs'
 import ExploreBlog from './ExploreBlog'
 import Alert from '@mui/material/Alert'
-import { Container, Typography, useMediaQuery } from '@mui/material'
+import { Container, Typography, Box, Divider, useMediaQuery, useTheme } from '@mui/material'
 import LoadingSpinner from '../mui-components/LoadingSpinner'
 import CommentForm from '../mui-components/CommentForm'
 import CommentPost from '../mui-components/CommentPost'
 
 export default function IndividualBlogPage({ user }) {
-
-    const isMobile = useMediaQuery('(max-width:500px)')
+    const theme = useTheme()
+    const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
 
     const { blogId } = useParams()
     const { blogInfo, comments, setComments, loading, error } = useIndividualBlog(blogId)
     const { userLikedBlogs } = useGetUserLikedBlogs(user)
 
     const errorPage = (
-        <div className="errorPage">
-        <Alert severity="error" sx={{ fontWeight: '600', fontSize: '20px' }}>Ooops. That page is in another castle.</Alert>
-        <h1 style={{ marginTop: '70px' }}>🛠️ Something went wrong. Ensure the blog post you are looking for exists.</h1>
-        </div>
+        <Box sx={{ textAlign: 'center', py: 8 }}>
+            <Alert severity="error" sx={{ fontWeight: '600', fontSize: '20px', mb: 4 }}>
+                Oops! That page is in another castle.
+            </Alert>
+            <Typography variant="h5" sx={{ mt: 4 }}>
+                🛠️ Something went wrong. Ensure the blog post you are looking for exists.
+            </Typography>
+        </Box>
     )
 
     if(loading) {
         return <LoadingSpinner message={'Loading blog data...'} />
-
     } else if (error) {
         return errorPage
     }
 
     const handleCommentSubmit = async (event, commentContent) => {
 
-        const trimmedContent = commentContent.trim()
+      const trimmedContent = commentContent.trim()
 
-        if (trimmedContent.length < 3 || trimmedContent.length === 0) {
-          alert('Invalid comment content. Please enter at least 3 characters.')
-          return
-        }
+      if (trimmedContent.length < 3 || trimmedContent.length === 0) {
+        alert('Invalid comment content. Please enter at least 3 characters.')
+        return
+      }
 
-       try {
+     try {
 
-        if(user) {
+      if(user) {
 
-            const newComment = {
+          const newComment = {
 
-                postedBy: {
-                  username: user.username,
-                  id: user.id,
-                },
-                commentContent: trimmedContent,
-              }
+              postedBy: {
+                username: user.username,
+                id: user.id,
+              },
+              commentContent: trimmedContent,
+            }
 
-            const response = await handleBlogs.addBlogComment(blogId, newComment)
+          const response = await handleBlogs.addBlogComment(blogId, newComment)
 
-            setComments([response, ...comments])
-            return response
+          setComments([response, ...comments])
+          return response
 
-        } else {
-           alert('Please log in to post comments.')
-           return
-        }
+      } else {
+         alert('Please log in to post comments.')
+         return
+      }
 
-       } catch(err) {
-        alert(err)
-       }
+     } catch(err) {
+      alert(err)
+     }
 
-    }
+  }
+    return (
+        <Container maxWidth="lg" sx={{ py: 4 }}>
+            <Box sx={{ mb: 6 }}>
+                <Typography variant={isMobile ? 'h5' : 'h4'} sx={{ mb: 2, fontWeight: 'bold', color: 'blue' }}>
+                    Blog Post
+                </Typography>
+                <Divider sx={{ mb: 4 }} />
+                <Box sx={{ ml: '-25px' }}>
+                    <ExploreBlog
+                        blogObject={blogInfo}
+                        user={user}
+                        getUserLikedBlogs={userLikedBlogs}
+                        showPostedBy={true}
+                        isIndividualPage={true}
+                    />
+                </Box>
+            </Box>
 
-    return <Container sx={{ ml: '20px' }}>
-    <Typography variant={isMobile ? 'h6' : 'h4'} sx={{ my: '30px', ml: '-40px', color: 'black' }}>Viewing individual blog post</Typography>
-    <ExploreBlog
-    blogObject={blogInfo}
-    user={user}
-    getUserLikedBlogs={userLikedBlogs}
-    showPostedBy={true}
-    isIndividualPage={true}
-  />
-  <Typography variant="h5" sx={{ my: '30px', ml: '-45px', color: 'black' }}>Comments</Typography>
-  <CommentForm onSubmit={handleCommentSubmit}/>
-  {comments.map((comment, index) => (
-          <CommentPost key={index} comment={comment} />
-        ))}
-    </Container>
+            <Box sx={{ mb: 6 }}>
+                <Typography variant={isMobile ? 'h5' : 'h4'} sx={{ mb: 2, fontWeight: 'bold', color: 'blue' }}>
+                    Discussion
+                </Typography>
+                <Divider sx={{ mb: 4 }} />
+                <CommentForm onSubmit={handleCommentSubmit} />
+                <Box sx={{ mt: 4 }}>
+                    {comments.length > 0 ? (
+                        comments.map((comment, index) => (
+                            <CommentPost key={index} comment={comment} />
+                        ))
+                    ) : (
+                        <Typography variant="body1" sx={{ fontStyle: 'italic', color: 'text.secondary' }}>
+                            No comments yet. Be the first to share your thoughts!
+                        </Typography>
+                    )}
+                </Box>
+            </Box>
+        </Container>
+    )
 }

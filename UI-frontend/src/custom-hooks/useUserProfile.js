@@ -1,17 +1,19 @@
 import blogService from '../services/handleBlogs'
-import detectLogoutService from '../services/autoLogout'
 import { useState, useEffect } from 'react'
+import { useAuth } from '../components/AuthProvider'
 
-export const useUserProfile = (user, handleLogoutFunction) => {
+export const useUserProfile = () => {
 
     const [blogs, setUserBlogs] = useState([])
     const [loadingUserProfile, setLoading] = useState(false)
     const [errorUserProfile, setError] = useState(null)
 
-    // If user is logged in, we render their blog posts. Also starts the logout detector service, and returns it's cleanup function.
+    const { user, loading } = useAuth()
+
+    // If user is logged in, we render their blog posts.
   useEffect(() => {
 
-    if (user) {
+    if (!loading && user) {
 
       const fetchUserBlogs = async () => {
 
@@ -23,19 +25,14 @@ export const useUserProfile = (user, handleLogoutFunction) => {
         } catch (err) {
           setError(err.message)
         } finally {
-            setLoading(false)
+          setLoading(false)
         }
       }
 
       fetchUserBlogs()
-      // starts the automatic logout detector. Doesn't work if closed browser, only inactivity while open/minimized.
-      const cleanUpListeners = detectLogoutService(handleLogoutFunction)
-
-      return cleanUpListeners
     }
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user])
+  }, [user, loading])
 
   return { blogs, setUserBlogs, loadingUserProfile, errorUserProfile }
 

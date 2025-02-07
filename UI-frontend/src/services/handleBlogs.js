@@ -1,5 +1,5 @@
 import axios from 'axios'
-const baseUrl = '/blogs'
+const baseUrl = 'http://localhost:3000/blogs'
 
 let token = null
 
@@ -50,8 +50,9 @@ const addBlog = async blogData => {
     const response = await axios.post(baseUrl, blogData, config)
     return response
 
-  } catch(err) {
+  } catch(err) {    
     console.log(err)
+    throw err.response?.data?.error || err.message || 'An unknown error occured'
   }
 }
 
@@ -68,7 +69,7 @@ const deleteBlog = async blogId => {
     return response
 
   } catch(err) {
-    console.log(err)
+    throw err.response?.data?.error || err.message || 'An unknown error occured'
   }
 }
 // for rendering user profile homepage
@@ -80,17 +81,20 @@ const getUserBlogs = async userInfo => {
       let userId
       userId = userInfo.username
 
-      let userBlogsUrl = `/users/${userId}/blogs`
+      let userBlogsUrl = `http://localhost:3000/users/${userId}/blogs`
 
       const response = await axios.get(userBlogsUrl)
 
-      const result = response.data.map(blog => blog)
+      const result = response.data.map(blog => {
+        if(!(blog === undefined)) {
+          return blog
+        }
+      })
+
       return result
 
     } catch(err) {
-      console.error(err)
-      alert(err.message)
-      return []
+      throw err.response?.data?.error || err.message || 'An unknown error occured'
     }
   }
   return []
@@ -108,7 +112,7 @@ const addBlogComment = async (blogId, commentObject) => {
     return response.data
 
   } catch(err) {
-    console.log(err)
+    throw err.response?.data?.error || err.message || 'An unknown error occured'
   }
 
 }

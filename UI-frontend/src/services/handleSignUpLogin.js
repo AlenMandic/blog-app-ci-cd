@@ -1,6 +1,6 @@
 import axios from 'axios'
-const baseUrl = '/login'
-const baseUrlSignUp = '/users'
+const baseUrl = 'http://localhost:3000/login'
+const baseUrlSignUp = 'http://localhost:3000/users'
 
 // attempt to register new user
 const registerUser = async credentials => {
@@ -8,7 +8,8 @@ const registerUser = async credentials => {
     const response = await axios.post(baseUrlSignUp, credentials)
     return response
   } catch(err) {
-    console.log(err)
+    console.log(err.response.data.error)
+    throw err.response?.data?.error || err.message || 'An unknown error occured'
   }
 }
 
@@ -18,7 +19,7 @@ const login = async credentials => {
     const response = await axios.post(baseUrl, credentials)
     return response.data
   } catch(err) {
-    console.log(err)
+    throw err.response?.data?.error || err.message || 'An unknown error occured'
   }
 }
 

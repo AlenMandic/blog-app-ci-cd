@@ -1,140 +1,145 @@
-import * as React from 'react'
-import Avatar from '@mui/material/Avatar'
-import Button from '@mui/material/Button'
-import CssBaseline from '@mui/material/CssBaseline'
-import TextField from '@mui/material/TextField'
-import FormControlLabel from '@mui/material/FormControlLabel'
-import Checkbox from '@mui/material/Checkbox'
-import Link from '@mui/material/Link'
-import Paper from '@mui/material/Paper'
-import Box from '@mui/material/Box'
-import Grid from '@mui/material/Grid'
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined'
-import { Typography, useMediaQuery } from '@mui/material'
-import { createTheme, ThemeProvider } from '@mui/material/styles'
+import React from 'react'
+import {
+  Box,
+  Button,
+  TextField,
+  Typography,
+  Paper,
+  InputAdornment,
+  IconButton,
+  useTheme,
+  useMediaQuery,
+} from '@mui/material'
+import { Visibility, VisibilityOff, LockOutlined } from '@mui/icons-material'
+import { Link } from 'react-router-dom'
+import { useAuth } from '../components/AuthProvider'
 
-function Copyright(props) {
-  return (
-    <Typography variant="body2" color="text.secondary" align="center" {...props}>
-      {'Copyright © '}
-      <Link color="inherit" href="https://blog-list-app-backend.fly.dev">
-        SnapBlog
-      </Link>{' '}
-      {new Date().getFullYear()}
-      {'.'}
-    </Typography>
+export default function Login({ showPassword, handleShowPassword, handleLogin, user }) {
+  const theme = useTheme()
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
+
+  const { username, setUsername, password, setPassword } = useAuth()
+
+  const loggedIn = (
+    <Box sx={{ textAlign: 'center', py: 8 }}>
+      <Typography variant="h4" color="primary" fontWeight="bold">
+        Welcome back!
+      </Typography>
+      <Typography variant="h6" sx={{ mt: 2 }}>
+        You are currently logged in.
+      </Typography>
+    </Box>
   )
-}
 
-const defaultTheme = createTheme()
-
-export default function SignInSide({ username, setUsername, password, setPassword, showPassword, handleShowPassword, handleLogin, user }) {
-
-  const isMobile = useMediaQuery('(max-width:500px)')
-
-    const loggedIn = <Typography variant="h2" sx={{ mt: '55px' }}>You are currently logged in.</Typography>
-    const notLoggedIn = <ThemeProvider theme={defaultTheme}>
-    <Grid container component="main" sx={{ height: '100vh' }}>
-      <CssBaseline />
-      <Grid
-        item
-        xs={false}
-        sm={4}
-        md={7}
-        sx={{
-          backgroundImage: 'url(https://source.unsplash.com/random?wallpapers)',
-          backgroundRepeat: 'no-repeat',
-          backgroundColor: (t) =>
-            t.palette.mode === 'light' ? t.palette.grey[50] : t.palette.grey[900],
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          borderRadius: '4px',
-        }}
-      />
-      <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square sx={{ borderRadius: '4px' }}>
-        <Box
-          sx={{
-            my: 8,
-            mx: 4,
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-          }}
-        >
-          <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
-            <LockOutlinedIcon />
-          </Avatar>
-          <Typography component="h1" variant="h5">
-            Log in
-          </Typography>
-          <Box component="form" onSubmit={handleLogin} sx={{ mt: 1 }} autoComplete='login-form'>
-          <TextField
-    label="Username."
-    value={username}
-    margin="normal"
-    required
-    fullWidth
-    id="username-input"
-    name="username-input"
-    autoComplete="username-input4323424324"
-    autoFocus
-    inputProps={{
-      minLength: 3,
-      maxLength: 30,
-    }}
-    onChange={({
-      target
-    }) => setUsername(target.value)}
-  />
-      <TextField
-      label="Password."
-      value={password}
-      margin="normal"
-      required
-      fullWidth
-      id="password-input"
-      name="password-input"
-      autoComplete='password-input536263243243'
-      inputProps={{
-        minLength: 15,
-        maxLength: 80,
+  const notLoggedIn = (
+    <Box
+      sx={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        minHeight: '60vh',
       }}
-      type={showPassword ? 'text' : 'password'}
-      onChange={({
-          target
-        }) => setPassword(target.value)}
-    />
-  <FormControlLabel
-    control={<Checkbox id="show-password-checkbox" name="show-password-checkbox" color="primary" value={showPassword} onChange={handleShowPassword} />}
-    label="Show password"
-  />
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              sx={{ mt: 3, mb: 2 }}
-            >
-              Sign In
-            </Button>
-            <Grid container>
-              <Grid item>
-                <Link href="/api/register" variant="body2">
-                  {'Don\'t have an account? Sign Up'}
-                </Link>
-              </Grid>
-            </Grid>
-            <Copyright sx={{ mt: 5 }} />
+    >
+      <Paper
+        elevation={3}
+        sx={{
+          border: 'solid 2px black',
+          borderRadius: '12px',
+          p: 4,
+          width: '100%',
+          maxWidth: 400,
+          borderRadius: 2,
+        }}
+      >
+        <Box sx={{ mb: 3, textAlign: 'center' }}>
+          <IconButton
+            sx={{
+              backgroundColor: theme.palette.primary.main,
+              color: theme.palette.primary.contrastText,
+              '&:hover': { backgroundColor: theme.palette.primary.dark },
+              mb: 2,
+            }}
+          >
+            <LockOutlined />
+          </IconButton>
+          <Typography component="h1" variant="h5" fontWeight="bold">
+            Log In
+          </Typography>
+        </Box>
+        <Box component="form" onSubmit={handleLogin} sx={{ mt: 1 }} autoComplete='login-form'>
+          <TextField
+            label="Username"
+            value={username}
+            margin="normal"
+            required
+            fullWidth
+            id="username-input"
+            name="username-input"
+            autoComplete="username-input4323424324"
+            autoFocus
+            inputProps={{
+              minLength: 3,
+              maxLength: 30,
+            }}
+            onChange={({ target }) => setUsername(target.value)}
+          />
+          <TextField
+            label="Password"
+            value={password}
+            margin="normal"
+            required
+            fullWidth
+            id="password-input"
+            name="password-input"
+            autoComplete='password-input536263243243'
+            inputProps={{
+              minLength: 15,
+              maxLength: 80,
+            }}
+            type={showPassword ? 'text' : 'password'}
+            onChange={({ target }) => setPassword(target.value)}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton onClick={handleShowPassword} edge="end">
+                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
+          />
+          <Button
+            type="submit"
+            fullWidth
+            variant="contained"
+            sx={{ mt: 3, mb: 2, py: 1.5, fontWeight: 'bold' }}
+          >
+            Sign In
+          </Button>
+          <Box sx={{ textAlign: 'center', mt: 2 }}>
+            <Link to="/api/register" style={{ textDecoration: 'none' }}>
+              <Typography variant="body2" color="primary">
+                Don't have an account? Sign Up
+              </Typography>
+            </Link>
           </Box>
         </Box>
-      </Grid>
-    </Grid>
-  </ThemeProvider>
+      </Paper>
+    </Box>
+  )
 
   return (
     <>
-     {!user && <Typography variant={isMobile ? 'h6' : 'h4'} sx={{ textAlign: 'center', my: '80px' }}>Have an account? Log In</Typography>}
-     {!user && notLoggedIn}
-     {user && loggedIn}
+      {!user && (
+        <Typography
+          variant={isMobile ? 'h5' : 'h4'}
+          sx={{ textAlign: 'center', my: 4, fontWeight: 'bold', color: 'blue' }}
+        >
+          Welcome to SnapBlog
+        </Typography>
+      )}
+      {!user && notLoggedIn}
+      {user && loggedIn}
     </>
   )
 }

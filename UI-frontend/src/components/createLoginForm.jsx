@@ -1,7 +1,7 @@
 import  { React, useState } from 'react'
 import SignInSide from '../mui-components/Login'
 
-export default function CreateLoginForm({ handleLogin, username, setUsername, password, setPassword, user }) {
+export default function CreateLoginForm({ handleLogin, user }) {
 
   const [showPassword, setShowPassword] = useState(false)
 
@@ -10,6 +10,6 @@ export default function CreateLoginForm({ handleLogin, username, setUsername, pa
   }
 
     return <>
-     <SignInSide username={username} setUsername={setUsername} password={password} setPassword={setPassword} showPassword={showPassword} handleShowPassword={handleShowPassword} handleLogin={handleLogin} user={user} />
+     <SignInSide showPassword={showPassword} handleShowPassword={handleShowPassword} handleLogin={handleLogin} user={user} />
     </>
   }

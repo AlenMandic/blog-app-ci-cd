@@ -1,159 +1,197 @@
-import * as React from 'react'
-import Avatar from '@mui/material/Avatar'
-import Alert from '@mui/material/Alert'
-import Button from '@mui/material/Button'
-import CssBaseline from '@mui/material/CssBaseline'
-import TextField from '@mui/material/TextField'
-import Link from '@mui/material/Link'
-import Grid from '@mui/material/Grid'
-import Box from '@mui/material/Box'
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined'
-import { Typography, useMediaQuery } from '@mui/material'
-import Container from '@mui/material/Container'
-import { createTheme, ThemeProvider } from '@mui/material/styles'
-
-function Copyright(props) {
-  return (
-    <Typography variant="body2" color="text.secondary" align="center" {...props}>
-      {'Copyright © '}
-      <Link color="inherit" href="https://blog-list-app-backend.fly.dev">
-        SnapBlog
-      </Link>{' '}
-      {new Date().getFullYear()}
-      {'.'}
-    </Typography>
-  )
-}
-
-// TODO remove, this demo shouldn't need to reset the theme.
-const defaultTheme = createTheme()
+import React from 'react'
+import {
+  Box,
+  Button,
+  TextField,
+  Typography,
+  Paper,
+  InputAdornment,
+  IconButton,
+  useTheme,
+  useMediaQuery,
+  Grid,
+  Alert,
+} from "@mui/material";
+import { Visibility, VisibilityOff, PersonAddOutlined } from '@mui/icons-material'
+import { Link } from 'react-router-dom'
 
 export default function SignUp({ user, username, setUsername, name, setName, password, setPassword, repeatPassword, setRepeatPassword, handleSignUp }) {
+  const theme = useTheme()
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
+  const [showPassword, setShowPassword] = React.useState(false)
+  const [showRepeatPassword, setShowRepeatPassword] = React.useState(false)
 
-  const isMobile = useMediaQuery('(max-width:500px)')
+  const handleShowPassword = () => setShowPassword((show) => !show)
+  const handleShowRepeatPassword = () => setShowRepeatPassword((show) => !show)
 
-  const loggedIn = <Typography variant="h3" sx={{ mt: '55px' }}>You are already logged in and have an account.</Typography>
+  const loggedIn = (
+    <Box sx={{ textAlign: 'center', py: 8 }}>
+      <Typography variant="h4" color="primary" fontWeight="bold">
+        You're already part of our community!
+      </Typography>
+      <Typography variant="h6" sx={{ mt: 2 }}>
+        You are currently logged in and have an account.
+      </Typography>
+    </Box>
+  )
 
-  const notLoggedIn = <ThemeProvider theme={defaultTheme}>
-  <Container component="main" maxWidth="xs" sx={{ backgroundColor: 'white', color: 'black', borderRadius: '8px' }}>
-    <CssBaseline />
+  const notLoggedIn = (
     <Box
       sx={{
         display: 'flex',
-        flexDirection: 'column',
+        justifyContent: 'center',
         alignItems: 'center',
+        minHeight: '100vh',
       }}
     >
-      <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
-        <LockOutlinedIcon />
-      </Avatar>
-      <Typography component="h1" variant="h5">
-        Sign up
-      </Typography>
-      <Box component="form" onSubmit={handleSignUp} sx={{ mt: 3 }} autoComplete='signup-form'>
-        <Grid container spacing={2}>
-        <Grid item xs={12}>
-            <TextField
-              required
-              fullWidth
-              id="signupUsername"
-              label="Username"
-              name="signupUsername"
-              autoComplete="new-username"
-              value={username}
-              inputProps={{
-                minLength: 3,
-                maxLength: 30,
-              }}
-              onChange={({
-                target
-              }) => setUsername(target.value)}
-            />
+      <Paper
+        elevation={3}
+        sx={{
+          p: 4,
+          border: 'solid 2px black',
+          borderRadius: '12px',
+          width: '100%',
+          maxWidth: 500,
+          borderRadius: 2,
+        }}
+      >
+        <Box sx={{ mb: 3, textAlign: 'center' }}>
+          <IconButton
+            sx={{
+              backgroundColor: theme.palette.primary.main,
+              color: theme.palette.primary.contrastText,
+              '&:hover': { backgroundColor: theme.palette.primary.dark },
+              mb: 2,
+            }}
+          >
+            <PersonAddOutlined />
+          </IconButton>
+          <Typography component="h1" variant="h5" fontWeight="bold">
+            Sign Up
+          </Typography>
+        </Box>
+        <Box component="form" onSubmit={handleSignUp} sx={{ mt: 3 }} autoComplete='signup-form'>
+          <Grid container spacing={2}>
+            <Grid item xs={12}>
+              <TextField
+                required
+                fullWidth
+                id="signupUsername"
+                label="Username"
+                name="signupUsername"
+                autoComplete="new-username"
+                value={username}
+                inputProps={{
+                  minLength: 3,
+                  maxLength: 30,
+                }}
+                onChange={({ target }) => setUsername(target.value)}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                required
+                fullWidth
+                id="signUpname"
+                label="Name"
+                name="signUpname"
+                autoComplete="new-name"
+                value={name}
+                inputProps={{
+                  minLength: 3,
+                  maxLength: 30,
+                }}
+                onChange={({ target }) => setName(target.value)}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                required
+                fullWidth
+                name="signUp-password"
+                label="Password"
+                type={showPassword ? 'text' : 'password'}
+                id="signUp-password"
+                autoComplete='new-password21351212315'
+                value={password}
+                inputProps={{
+                  minLength: 15,
+                  maxLength: 80,
+                }}
+                onChange={({ target }) => setPassword(target.value)}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton onClick={handleShowPassword} edge="end">
+                        {showPassword ? <VisibilityOff /> : <Visibility />}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                required
+                fullWidth
+                name="repeatPassword"
+                label="Repeat password"
+                type={showRepeatPassword ? 'text' : 'password'}
+                id="repeatPassword"
+                autoComplete='new-repeatPassword'
+                value={repeatPassword}
+                inputProps={{
+                  minLength: 15,
+                  maxLength: 80,
+                }}
+                onChange={({ target }) => setRepeatPassword(target.value)}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton onClick={handleShowRepeatPassword} edge="end">
+                        {showRepeatPassword ? <VisibilityOff /> : <Visibility />}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
+              />
+            </Grid>
           </Grid>
-          <Grid item xs={12}>
-            <TextField
-              required
-              fullWidth
-              id="signUpname"
-              label="Name"
-              name="signUpname"
-              autoComplete="new-name"
-              value={name}
-              inputProps={{
-                minLength: 3,
-                maxLength: 30,
-              }}
-              onChange={({
-                target
-              }) => setName(target.value)}
-            />
-          </Grid>
-          <Grid item xs={12}>
-            <TextField
-              required
-              fullWidth
-              name="signUp-password"
-              label="Password"
-              type="password"
-              id="signUp-password"
-              autoComplete='new-password21351212315'
-              value={password}
-              inputProps={{
-                minLength: 15,
-                maxLength: 80,
-              }}
-              onChange={({
-                target
-              }) => setPassword(target.value)}
-            />
-          </Grid>
-          <Grid item xs={12}>
-            <TextField
-              required
-              fullWidth
-              name="repeatPassword"
-              label="Repeat password"
-              type="password"
-              id="repeatPassword"
-              autoComplete='new-repeatPassword'
-              value={repeatPassword}
-              inputProps={{
-                minLength: 15,
-                maxLength: 80,
-              }}
-              onChange={({
-                target
-              }) => setRepeatPassword(target.value)}
-            />
-          </Grid>
-        </Grid>
-        <Alert severity="info" style={{ backgroundColor: '#1f1f54', color: 'white', marginTop: '20px' }}>Password must be 15 characters or more; include atleast 1 capital letter, 1 number, and 1 special character!</Alert>
-        <Button
-          type="submit"
-          fullWidth
-          variant="contained"
-          sx={{ mt: 3, mb: 2 }}
-        >
-          Sign Up
-        </Button>
-        <Grid container justifyContent="flex-end">
-          <Grid item>
-            <Link href="/api/login" variant="body2" sx={{ mr: '100px' }}>
-              Already have an account? Sign in
+          <Alert severity="info" sx={{ mt: 2, backgroundColor: theme.palette.info.light }}>
+            Password must be 15 characters or more; include at least 1 capital letter, 1 number, and 1 special character!
+          </Alert>
+          <Button
+            type="submit"
+            fullWidth
+            variant="contained"
+            sx={{ mt: 3, mb: 2, py: 1.5, fontWeight: 'bold' }}
+          >
+            Sign Up
+          </Button>
+          <Box sx={{ textAlign: 'center', mt: 2 }}>
+            <Link to="/api/login" style={{ textDecoration: 'none' }}>
+              <Typography variant="body2" color="primary">
+                Already have an account? Sign in
+              </Typography>
             </Link>
-          </Grid>
-        </Grid>
-      </Box>
+          </Box>
+        </Box>
+      </Paper>
     </Box>
-    <Copyright sx={{ mt: 5 }} />
-  </Container>
-</ThemeProvider>
+  )
 
   return (
-<>
-{!user && <Typography variant={isMobile ? 'h6' : 'h4'} sx={{ textAlign: 'center', mb: '40px' }}>Create an account</Typography>}
-{user && loggedIn}
-{!user && notLoggedIn}
-</>
+    <>
+      {!user && (
+        <Typography
+          variant={isMobile ? 'h5' : 'h4'}
+          sx={{ textAlign: 'center', my: 4, fontWeight: 'bold', color: 'blue' }}
+        >
+          Join the SnapBlog Community
+        </Typography>
+      )}
+      {user && loggedIn}
+      {!user && notLoggedIn}
+    </>
   )
 }

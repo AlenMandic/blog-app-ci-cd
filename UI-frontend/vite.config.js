@@ -7,5 +7,13 @@ export default defineConfig({
   build: {
     sourcemap: true,
   },
+  resolve: {
+    alias: [
+      {
+        find: /^@mui\/icons-material\/(.*)/,
+        replacement: '@mui/icons-material/esm/$1',
+      },
+    ],
+  },
 
 })

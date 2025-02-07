@@ -41,7 +41,7 @@ describe('Blog posting app', () => {
     cy.contains('Login failed. Verify login details')
     cy.get('html').should('not.contain', 'testingname1 is logged in')
   })
-  
+
  it('Sign-up fails with incorrectly formatted password', function() {
   cy.visit(`${baseUrl}`)
   cy.wait(2000)
@@ -51,9 +51,10 @@ describe('Blog posting app', () => {
   cy.get('#signUp-password').type('Hgggggggggggggg111')
   cy.get('#repeatPassword').type('Hgggggggggggggg111')
 
-  cy.contains('Sign Up').click()
+  cy.contains('Sign Up').click({ multiple: true })
+  cy.wait(500)
 
-  cy.contains('An error occured while registering your account.')
+  cy.contains('Join the SnapBlog Community') //still on the same page after unsuccessfull signup
 })
 
 it('We cannot visit the login page if we are already logged in, and will be redirected back onto the home page', function() {
@@ -68,7 +69,7 @@ cy.contains('Sign In').click()
 cy.contains('Logged in as testingname1')
 
 cy.visit(`${baseUrl}/api/login`)
-cy.contains('Welcome to SnapBlog, a blog sharing site!')
+cy.contains('Welcome to SnapBlog')
 })
 
 it('We can visit the users list and view individual user profiles', function() {
@@ -76,7 +77,7 @@ cy.visit(`${baseUrl}`)
 cy.wait(2000)
 cy.visit(`${baseUrl}/api/users`)
 cy.contains('testingname1').click()
-cy.contains('Total likes: 776')
+cy.contains('Random Blog 5')
 })
 
 it('A logged in user can like a blog post', function() {
@@ -91,7 +92,7 @@ cy.contains('Sign In').click()
 cy.contains('Logged in as testingname1')
 
 cy.visit(`${baseUrl}/api/blogs`)
-cy.get('.css-en09l0').click({ multiple: true })
+cy.get('.MuiButtonBase-root').click({ multiple: true })
 cy.contains('56')
 })
 
@@ -110,8 +111,8 @@ cy.contains('Logged in as testingname1')
 cy.visit(`${baseUrl}/api/blogs`)
 
 cy.contains('View Post').click()
-cy.contains('Viewing individual blog post')
-cy.get('#\\:r1\\:').type('New comment from end-to-end testing!') // :r1: is id of the textarea element
+cy.contains('Blog Post') // on individual blog page
+cy.get('.MuiInputBase-input').type('New comment from end-to-end testing!')
 
 cy.contains('Send').click()
 cy.wait(1500)

@@ -14,13 +14,13 @@ const getLikedPosts = async userId => {
   try {
 
     id = userId.username
-    const baseUrl = `/users/${id}/likes`
+    const baseUrl = `http://localhost:3000/users/${id}/likes`
 
     const response = await axios.get(baseUrl)
     return response.data
 
   } catch (err) {
-    console.log(err)
+    throw err.response?.data?.error || err.message || 'An unknown error occured'
   }
 }
 
@@ -32,7 +32,7 @@ const handleLikeDislike = async (blog, type) => {
 
   const id = blog.id
   const newBlog = blog
-  const baseUrl = `/blogs/${id}`
+  const baseUrl = `http://localhost:3000/blogs/${id}`
 
   if(type === 'like') {
     newBlog.likes += 1
@@ -42,7 +42,7 @@ const handleLikeDislike = async (blog, type) => {
       return response.data
 
     } catch (err) {
-      console.log(err)
+      throw err.response?.data?.error || err.message || 'An unknown error occured'
     }
   }
 
@@ -53,7 +53,7 @@ const handleLikeDislike = async (blog, type) => {
     return response.data
 
   } catch (err) {
-    console.log(err)
+    throw err.response?.data?.error || err.message || 'An unknown error occured'
   }
 
 }

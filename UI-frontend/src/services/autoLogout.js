@@ -1,5 +1,7 @@
 // automatic logout after 1 hour of inactivity, or minimizing the browser/switching tabs.
 
+// NOTE: currently not being used anywhere.
+
 let logoutTimer
 const timeout = 3600000 //1 hour
 
@@ -25,7 +27,7 @@ const setUpLogOutListeners = (handleLogoutFunction) => {
 document.addEventListener('mousemove', resetLogoutTimer)
 document.addEventListener('keypress', resetLogoutTimer)
 
-  startLogoutTimer() // starts the initial default 1 hour countdown check.
+startLogoutTimer() // starts the initial default 1 hour countdown check.
 
   // returning a cleanup function for our useEffect in App.jsx where this will run.
   return () => {

@@ -1,227 +1,195 @@
 // Material UI imports
-import Container from '@mui/material/Container'
-import ResponsiveHeader from './mui-components/Header'
-import StickyFooter from './mui-components/Footer'
-import Typography from '@mui/material/Typography'
-import Alert from '@mui/material/Alert'
-import { Button } from '@mui/material'
-import LoadingSpinner from './mui-components/LoadingSpinner'
+import Container from "@mui/material/Container";
+import Typography from "@mui/material/Typography";
+import Button from "@mui/material/Button";
+import Box from "@mui/material/Box";
+import LoadingSpinner from "./mui-components/LoadingSpinner";
+import ExploreIcon from '@mui/icons-material/Explore';
+import { Layout } from "./mui-components/Layout";
 
 // Regular imports
-import './style.css'
-import { showErrorNotification, showSuccessNotification } from './utils'
-import { useState, useEffect, useRef } from 'react'
-import loginService from './services/handleSignUpLogin'
-import blogService from './services/handleBlogs'
-import userLikesService from './services/handleUserLikes'
-import AddBlog from './components/addBlogForm'
-import CreateLoginForm from './components/createLoginForm'
-import UserBlog from './components/UserBlog'
-import { NotificationError, NotificationSuccess, } from './components/Notification'
-import ExplorePage from './components/ExplorePage'
-import ExploreBlog from './components/ExploreBlog'
-import UsersPage from './components/UsersPage'
-import UserPage from './components/IndividualUser'
-import CreateSignUpForm from './components/CreateSignUpForm'
-import { BrowserRouter as Router, Routes, Route, Link, Navigate } from 'react-router-dom'
-import UnknownRoute from './components/UnknownRoute'
-import { useCreateExplorePage } from './custom-hooks/useCreateExplorePage'
-import { useUserProfile } from './custom-hooks/useUserProfile'
-import { useGetUserLikedBlogs } from './custom-hooks/useGetUserLikedBlogs'
-import IndividualBlogPage from './components/IndividualBlog'
+import "./style.css";
+import { useState, useRef } from "react";
+import blogService from "./services/handleBlogs";
+import UserBlog from "./components/UserBlog";
+import ExploreBlog from "./components/ExploreBlog";
+import { BrowserRouter as Router } from "react-router-dom";
+
+// Custom hooks
+import { useCreateExplorePage } from "./custom-hooks/useCreateExplorePage";
+import { useUserProfile } from "./custom-hooks/useUserProfile";
+import { useGetUserLikedBlogs } from "./custom-hooks/useGetUserLikedBlogs";
+import { useNotification } from "./custom-hooks/useNotification";
+import { useAuth } from "./components/AuthProvider";
+
+import { MainRoutes } from "./components/MainRoutes";
 
 export default function App() {
 
-  const [username, setUsername] = useState('')
-  const [password, setPassword] = useState('')
-  const [user, setUser] = useState(null)
-  const [notificationError, setNotificationError] = useState(null)
-  const [notificationSuccess, setNotificationSuccess] = useState(null)
-  const [showUserPosts, setShowUserPosts] = useState(true)
+  const { user } = useAuth();
 
-  const randomBlogRef = useRef(null)
+  const [showUserPosts, setShowUserPosts] = useState(true);
 
-  // If user is logged in on their ususal device: retrieve the user once on mount and store it. Give token to relevant services.
-  useEffect(() => {
-    const loggedInUser = window.localStorage.getItem('loggedInBlogAppUser')
-
-    if (loggedInUser) {
-      const user = JSON.parse(loggedInUser)
-      setUser(user)
-      blogService.setToken(user.token)
-      userLikesService.setToken(user.token)
-    }
-  }, [])
+  const randomBlogRef = useRef(null);
 
   // custom hook which renders out and handles data for the Front Page page.
-  const { explorePageState, setExplorePageState, loading, error } = useCreateExplorePage()
-  // custom hook for logged in user and automatic logout detector
-  const { blogs, setUserBlogs, loadingUserProfile, errorUserProfile } = useUserProfile(user, handleLogout)
-// handle user data for random blog post
-  const { userLikedBlogs } = useGetUserLikedBlogs(user)
+  const { explorePageState, setExplorePageState, loading, error } =
+    useCreateExplorePage();
 
-  if(loading) {
-    return <LoadingSpinner message={'Loading data...'} />
-  } else if(error) {
-    return <p>Error: {error.message}</p>
+  // custom hook for logged in user-blogs
+  const { blogs, setUserBlogs, loadingUserProfile, errorUserProfile } =
+    useUserProfile();
+
+  // handle user data for random blog post
+  const { userLikedBlogs } = useGetUserLikedBlogs();
+
+  // custom hook for notifications
+  const { ErrorNotification, SuccessNotification, showErrorNotification, showSuccessNotification } = useNotification();
+
+  if (loading) {
+    return <LoadingSpinner message={"Loading data..."} />;
+  } else if (error) {
+    return <p>Error: {error.message}</p>;
   }
 
-  if(loadingUserProfile) {
-    return <LoadingSpinner message={'Loading your profile...'} />
+  if (loadingUserProfile) {
+    return <LoadingSpinner message={"Loading your profile..."} />;
   } else if (errorUserProfile) {
-    return <p>Error: {errorUserProfile.message}</p>
+    return <p>Error: {errorUserProfile.message}</p>;
   }
 
-  function resetForm() {
-    setUsername('')
-    setPassword('')
-    setUserBlogs([])
-    setUser(null)
-    localStorage.removeItem('loggedInBlogAppUser')
-  }
-
-  // updates Homepage and Explore page state when a user adds a new post from addBlogForm.jsx
+  // updates Homepage and Explore page state when a user adds a new post from addBlogForm.jsx component
   function handleBlogSubmitCallback(blogObject) {
-    const oldUserBlogs = blogs
+    const oldUserBlogs = blogs;
 
-    setUserBlogs(oldUserBlogs.concat(blogObject))
+    setUserBlogs(oldUserBlogs.concat(blogObject));
   }
 
-  async function handleLogin(e) {
-    e.preventDefault()
-
-    try {
-      const user = await loginService.login({ username, password }) // should return user: username, name, id, token
-
-      window.localStorage.setItem('loggedInBlogAppUser', JSON.stringify(user))
-      setUser(user)
-      blogService.setToken(user.token)
-      userLikesService.setToken(user.token)
-      setUsername('')
-      setPassword('')
-      showSuccessNotification('Logged in successfully.', setNotificationSuccess)
-
-    } catch (err) {
-      showErrorNotification('Login failed. Verify login details.', setNotificationError)
-      resetForm()
-    }
-  }
   // updates user blogs and the explore page when a user deletes one of his blogs.
   async function handleDelete(ourBlog) {
-    const confirm = window.confirm(`Are you sure you want to delete "${ourBlog.title}"`)
+    const confirm = window.confirm(
+      `Are you sure you want to delete "${ourBlog.title}"`
+    );
 
-    if(confirm) {
+    if (confirm) {
+      try {
+        const deleteBlog = await blogService.deleteBlog(ourBlog.id);
 
-      const deleteBlog = await blogService.deleteBlog(ourBlog.id)
+        const updatedUserBlogs = blogs.filter((blog) => blog.id !== ourBlog.id);
+        const updatedExplorePageBlogs = explorePageState.filter(
+          (blog) => blog.id !== ourBlog.id
+        );
+        setUserBlogs(updatedUserBlogs);
+        setExplorePageState(updatedExplorePageBlogs);
+        showSuccessNotification('Blog deleted!')
 
-      const updatedUserBlogs = blogs.filter(blog => blog.id !== ourBlog.id)
-      const updatedExplorePageBlogs = explorePageState.filter(blog => blog.id !== ourBlog.id)
-      setUserBlogs(updatedUserBlogs)
-      setExplorePageState(updatedExplorePageBlogs)
-
-      return deleteBlog.data
-
+        return deleteBlog.data;
+      } catch (error) {
+        showErrorNotification(error.response?.data?.error || err.message || 'An unknown error occured')
+      }
     } else {
-      return null
+      return null;
     }
   }
 
-  function handleLogout() {
-    setUser(null)
-    blogService.setToken(null)
-    userLikesService.setToken(null)
-    resetForm()
-  }
-
+  // show or hide user's personal blogs
   function handleUserPosts() {
-    if(showUserPosts) {
+    if (showUserPosts) {
       return (
         <div>
-          <Button variant="outlined" onClick={toggleUserPosts} sx={{ fontWeight: '600', border: 'solid 1px black', color: 'black', backgroundColor: 'white' }}>Hide posts</Button>
-          <ul>{blogs.map((blog) => (<UserBlog key={blog.id} blogObject={blog} handleDeleteCallback={handleDelete}/>))}</ul>
+          <Button
+            variant="contained"
+            onClick={toggleUserPosts}
+            sx={{ fontWeight: '600', width: '100%', maxWidth: '200px', my: '30px' }}
+          >
+            Hide posts
+          </Button>
+          <ul style={{ marginLeft: '-40px'}}>
+            {blogs.map((blog) => (
+              <UserBlog
+                key={blog.id}
+                blogObject={blog}
+                handleDeleteCallback={handleDelete}
+              />
+            ))}
+          </ul>
         </div>
-      )
+      );
     } else {
-      return <Button variant="outlined" onClick={toggleUserPosts} sx={{ fontWeight: '600', border: 'solid 1px black', color: 'black', backgroundColor: 'white' }}>Show your posts</Button>
+      return (
+        <Button
+          variant="contained"
+          onClick={toggleUserPosts}
+          sx={{ fontWeight: '600', width: '100%', maxWidth: '200px', my: '30px' }}
+        >
+          Show your posts
+        </Button>
+      );
     }
   }
 
   function toggleUserPosts() {
-    setShowUserPosts(!showUserPosts)
+    setShowUserPosts(!showUserPosts);
   }
 
+  // displays a random blog on every new refresh.
   function displayRandomBlog() {
-
-     const randomBlogIndex = 0
-     const randomBlog = explorePageState[randomBlogIndex]
-
-     return <Container sx={{ ml: '20px' }}>
-      <Typography variant="h5" sx={{ color: 'black', mb: '20px', ml: '-45px' }}>Explore a random blog post</Typography>
-     <ExploreBlog
-     blogObject={randomBlog}
-     user={user}
-     getUserLikedBlogs={userLikedBlogs}
-     showPostedBy={true}
-     isIndividualPage={false}
-     isRandomBlog={true}
-     />
-    </Container>
+    const randomBlogIndex = Math.floor(Math.random() * explorePageState.length);
+    const randomBlog = explorePageState[randomBlogIndex];
+  
+    return (
+      <Box elevation={3} sx={{ p: 3, mt: 4, marginLeft: '25px' }}>
+        <Typography
+          variant="h4"
+          gutterBottom
+          sx={{ 
+            marginLeft: '-40px',
+            fontWeight: 'bold', 
+            color: 'blue',
+            display: 'flex',
+            alignItems: 'center',
+            fontSize: {
+              xs: '1.5rem',    // extra-small devices
+              sm: '2rem',      // small devices
+              md: '2.5rem'     // medium devices and up
+            }
+          }}
+        >
+          <ExploreIcon sx={{ mr: 2 }} /> Explore a Random Blog Post
+        </Typography>
+        <Box sx={{ mt: 2, marginLeft: '-40px' }}>
+          <ExploreBlog
+            blogObject={randomBlog}
+            user={user}
+            getUserLikedBlogs={userLikedBlogs}
+            showPostedBy={true}
+            isIndividualPage={false}
+            isRandomBlog={true}
+          />
+        </Box>
+      </Box>
+    );
   }
-// on component mount, set useRef to 'random blog card' so it doesn't get re-rendered by any App.jsx state change.
-  if(!randomBlogRef.current) {
-    randomBlogRef.current = displayRandomBlog() // returns a React.JSX element, which will hold the ref.
+  // on component mount, set useRef to 'random blog card' so it doesn't get re-rendered by any App.jsx state change.
+  if (!randomBlogRef.current) {
+    randomBlogRef.current = displayRandomBlog(); // returns a React.JSX element
   }
 
   return (
-    <>
-      <Container sx={{ minHeight: '100vh', }}>
-      <NotificationError message={notificationError} />
-      <NotificationSuccess message={notificationSuccess} />
+      <Container sx={{ minHeight: "100vh" }}>
+        <Router>
+          <ErrorNotification />
+          <SuccessNotification />
+            <Layout>
 
-      <Router>
-       <div>
-       <ResponsiveHeader user={user} handleLogout={handleLogout} />
-        {user && (<Alert severity="info" style={{ backgroundColor: '#1f1f54', color: 'white' }}>Logged in as <strong>{user.name}</strong></Alert>)}
-       </div>
+              <MainRoutes
+                handleBlogSubmitCallback={handleBlogSubmitCallback}
+                handleUserPosts={handleUserPosts}
+                randomBlogRef={randomBlogRef}
+              />
 
-        <Routes>
-
-          <Route path="/" element={
-           <>
-
-           <h1 style={{ color: 'black' }}>Welcome to SnapBlog, a blog sharing site!</h1>
-           <h3 style={{ color: 'black' }}>Share and save your favorite blog posts with others.</h3>
-           <Link to="/api/blogs">
-              <Typography variant="h5" sx={{ my: '35px', color: 'black' }}>Browse the Front Page 🌍</Typography>
-              </Link>
-            {!user && <div><Alert severity="info" sx={{ backgroundColor: '#1f1f54', color: 'white', fontSize: '18px', my: '40px' }}><strong><Link to="/api/login" style={{ color: 'white', marginRight: '5px' }}>Log in </Link>  </strong>to be able to post and like other blogs!<br></br>Your profile will appear here.</Alert></div>}
-            {randomBlogRef.current}
-            {user && (<div>{<AddBlog updateUserPageState={handleBlogSubmitCallback} user={user}/>}<h1>Your blogs</h1>{handleUserPosts()}</div>)}
-              </>}
-             />
-
-          <Route path="/api/blogs" element={<ExplorePage user={user}/>}/>
-
-          <Route path="/api/users" element={<UsersPage />}/>
-
-          <Route path="/api/users/:userId" element={<UserPage user={user} />}/>
-
-          <Route path="/api/blogs/:blogId" element={<IndividualBlogPage user={user} />}/>
-
-          <Route path="/api/login" element={!user ? <CreateLoginForm handleLogin={handleLogin} username={username} setUsername={setUsername} password={password} setPassword={setPassword} user={user} /> : <Navigate to="/" />} />
-
-          <Route path="/api/register" element={!user ? <CreateSignUpForm user={user} showSuccessMessageCallback={showSuccessNotification} setNotificationSuccess={setNotificationSuccess} /> : <Navigate to="/" /> } />
-
-          <Route path="*" element={<UnknownRoute />} />
-
-        </Routes>
-
-      </Router>
-
-      <StickyFooter />
-
+            </Layout>
+        </Router>
       </Container>
-
-    </>
-  )
+  );
 }

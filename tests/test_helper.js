@@ -87,7 +87,6 @@ const loginUser = async (username, password) => {
 
   const request = await api.post('/login').send({ username, password })
   expect(request.status).toBe(200)
-  console.log('test helper token check: ', request.body.token)
   return request.body.token
 }
 

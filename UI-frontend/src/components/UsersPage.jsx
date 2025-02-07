@@ -1,39 +1,83 @@
+import React from 'react'
 import { Link } from 'react-router-dom'
-import { List, ListItemButton, ListItemText } from '@mui/material'
-import Typography from '@mui/material/Typography'
+import { List, ListItem, ListItemAvatar, ListItemText, Avatar, Typography, Container, Box, Divider, useTheme, useMediaQuery } from '@mui/material'
 import { useGetUsers } from '../custom-hooks/useGetUsers'
 import LoadingSpinner from '../mui-components/LoadingSpinner'
+import PersonIcon from '@mui/icons-material/Person'
+import ArticleIcon from '@mui/icons-material/Article'
 
 export default function UsersPage() {
+  const { users, loading, error } = useGetUsers()
+  const theme = useTheme()
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
 
-const { users, loading, error } = useGetUsers()
+  if (loading) {
+    return <LoadingSpinner message={'Loading users...'} />
+  }
 
-if(loading) {
-  return <LoadingSpinner message={'Loading users...'} />
-}
+  if (error) {
+    return <Typography color="error">Error: {error.message}</Typography>
+  }
 
-if (error) {
-  return <p>Error: {error.message}</p>
-}
-
-const ourUsers = <List>
-{users.map((user) => (
-  <ListItemButton key={user.id} component={Link} to={`/api/users/${user.id}`} sx={{ textDecoration: 'none', border: 'solid 1px black', borderRadius: '4px', color: 'black', margin: '15px', '&:hover': { backgroundColor: 'black', color: 'white' }  }}>
-    <ListItemText primary={<Typography variant="subtitle2" component="div" sx={{ fontSize: '17px' }}>
-          <span>{user.name}</span>
-          <span> - Posted</span>
-          <span style={{ marginLeft: '4px', fontSize: '30px', color: 'blue' }}>{user.blogs.length}</span>
-          <span> blogs</span>
-        </Typography>} />
-  </ListItemButton>
-))}
-</List>
-
-    return (
-    <>
-    <h1>Our users page.</h1>
-    <p>View individual user profiles and their posts.</p>
-    {ourUsers}
-    </>
-)
+  return (
+    <Container maxWidth="md">
+      <Box sx={{ my: 4, }}>
+        <Typography variant={isMobile ? 'h4' : 'h3'} component="h1" gutterBottom color="blue" fontWeight="bold">
+          Our Community
+        </Typography>
+        <Typography variant="subtitle1" gutterBottom color="text.secondary">
+          Explore our community of bloggers and their contributions.
+        </Typography>
+        <Divider sx={{ my: 3 }} />
+        <List sx={{ width: '100%', borderRadius: '8px' }}>
+          {users.map((user) => (
+            <React.Fragment key={user.id}>
+              <ListItem
+                alignItems="flex-start"
+                component={Link}
+                to={`/api/users/${user.id}`}
+                sx={{
+                  textDecoration: 'none',
+                  borderBottom: 'solid 2px black',
+                  color: 'inherit',
+                  transition: 'background-color 0.3s',
+                  borderRadius: 2,
+                  '&:hover': {
+                    backgroundColor: 'action.hover',
+                  },
+                }}
+              >
+                <ListItemAvatar>
+                  <Avatar sx={{ bgcolor: theme.palette.primary.main }}>
+                    <PersonIcon />
+                  </Avatar>
+                </ListItemAvatar>
+                <ListItemText
+                  primary={
+                    <Typography variant="h6" component="span">
+                      {user.name}
+                    </Typography>
+                  }
+                  secondary={
+                    <React.Fragment>
+                      <Typography
+                        sx={{ display: 'inline' }}
+                        component="span"
+                        variant="body2"
+                        color="text.primary"
+                      >
+                        <ArticleIcon sx={{ fontSize: 16, verticalAlign: 'text-bottom', mr: 0.5 }} />
+                        {user.blogs.length} blog{user.blogs.length !== 1 ? 's' : ''}
+                      </Typography>
+                    </React.Fragment>
+                  }
+                />
+              </ListItem>
+              <Divider variant="inset" component="li" />
+            </React.Fragment>
+          ))}
+        </List>
+      </Box>
+    </Container>
+  )
 }

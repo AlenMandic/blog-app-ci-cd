@@ -6,21 +6,40 @@ export default function CommentPost ({ comment }) {
   return (
     <Paper
       sx={{
-        padding: 2,
+        padding: { xs: 2, sm: 3 },
+        border: 'solid 2px black',
         marginTop: 2,
-        ml: '-45px',
-        minWidth: '21rem',
-        maxWidth: '70%',
+        width: '100%',
+        maxWidth: '600px',
+        borderRadius: '12px',
+        boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
       }}
-      elevation={2}
+      elevation={0}
     >
       <Box display="flex" alignItems="center">
-        <Avatar sx={{ marginRight: 1 }}>{comment.postedBy.username.charAt(0).toUpperCase()}</Avatar>
-        <Link to={`/api/users/${comment.postedBy.id}`} style={{ textDecoration: 'none' }}>
-        <Typography variant="subtitle1">{comment.postedBy.username}</Typography>
-        </Link>
+        <Avatar 
+          sx={{ 
+            marginRight: 2, 
+            width: 48, 
+            height: 48,
+            bgcolor: 'primary.main',
+          }}
+        >
+          {comment.postedBy.username.charAt(0).toUpperCase()}
+        </Avatar>
+        <Box>
+          <Link to={`/api/users/${comment.postedBy.id}`} style={{ textDecoration: 'none' }}>
+            <Typography variant="subtitle1" sx={{ fontWeight: 'bold', color: 'text.primary' }}>
+              {comment.postedBy.username}
+            </Typography>
+          </Link>
+          <Typography variant="caption" color="text.secondary">
+            {/* Add a timestamp here if available */}
+            Posted on {new Date().toLocaleDateString()}
+          </Typography>
+        </Box>
       </Box>
-      <Typography variant="body1" sx={{ marginTop: 1 }}>
+      <Typography variant="body1" sx={{ marginTop: 2, lineHeight: 1.6 }}>
         {comment.commentContent}
       </Typography>
     </Paper>
