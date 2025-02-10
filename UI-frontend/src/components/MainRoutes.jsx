@@ -5,7 +5,7 @@ import ExplorePage from '../components/ExplorePage'
 import UsersPage from '../components/UsersPage'
 import UserPage from '../components/IndividualUser'
 import IndividualBlogPage from '../components/IndividualBlog'
-import CreateLoginForm from '../components/CreateLoginForm'
+import CreateLoginForm from './CreateLoginForm'
 import CreateSignUpForm from '../components/CreateSignUpForm'
 import { useAuth } from './AuthProvider'
 
