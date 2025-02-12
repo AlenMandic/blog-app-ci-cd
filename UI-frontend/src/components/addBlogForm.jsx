@@ -37,7 +37,7 @@ export default function AddBlog({ updateUserPageState }) {
       return result.data
 
     } catch(err) {
-      showErrorNotification(error.response?.data?.error || err.message || 'An unknown error occured')
+      showErrorNotification(err.response?.data?.error || err.message || 'An unknown error occured')
     }
   }
 

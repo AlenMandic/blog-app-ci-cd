@@ -52,7 +52,6 @@ export default function SignUp({ user, username, setUsername, name, setName, pas
           borderRadius: '12px',
           width: '100%',
           maxWidth: 500,
-          borderRadius: 2,
         }}
       >
         <Box sx={{ mb: 3, textAlign: 'center' }}>

@@ -48,7 +48,6 @@ export default function Login({ showPassword, handleShowPassword, handleLogin, u
           p: 4,
           width: '100%',
           maxWidth: 400,
-          borderRadius: 2,
         }}
       >
         <Box sx={{ mb: 3, textAlign: 'center' }}>
